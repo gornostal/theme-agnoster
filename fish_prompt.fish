@@ -23,7 +23,8 @@ set right_segment_separator ⮀
 # ===========================
 
 set -g __fish_git_prompt_showdirtystate 'yes'
-set -g __fish_git_prompt_char_dirtystate '±'
+set -g __fish_git_prompt_char_dirtystate ' ±'
+set -g __fish_git_prompt_char_stashed ' $'
 set -g __fish_git_prompt_char_cleanstate ''
 
 function parse_git_dirty
@@ -38,6 +39,13 @@ function parse_git_dirty
     if [ $__fish_git_prompt_showdirtystate = "yes" ]
       echo -n "$__fish_git_prompt_char_cleanstate"
     end
+  end
+end
+
+function parse_git_stashed
+  set git_stashed (command git rev-parse --verify refs/stash 2> /dev/null)
+  if [ -n "$git_stashed" ]
+    echo -n "$__fish_git_prompt_char_stashed"
   end
 end
 
@@ -151,8 +159,10 @@ end
 function prompt_git -d "Display the current git state"
   set -l ref
   set -l dirty
+  set -l stashed
   if command git rev-parse --is-inside-work-tree >/dev/null 2>&1
     set dirty (parse_git_dirty)
+    set stashed (parse_git_stashed)
     set ref (command git symbolic-ref HEAD 2> /dev/null)
     if [ $status -gt 0 ]
       set -l branch (command git show-ref --head -s --abbrev |head -n1 2> /dev/null)
@@ -161,9 +171,9 @@ function prompt_git -d "Display the current git state"
     set branch_symbol ⭠
     set -l branch (echo $ref | sed  "s-refs/heads/-$branch_symbol -")
     if [ "$dirty" != "" ]
-      prompt_segment yellow black "$branch $dirty"
+      prompt_segment yellow black "$branch$dirty$stashed"
     else
-      prompt_segment green black "$branch $dirty"
+      prompt_segment green black "$branch$dirty$stashed"
     end
   end
 end
