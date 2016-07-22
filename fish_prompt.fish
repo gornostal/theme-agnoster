@@ -16,8 +16,8 @@
 
 
 set -g current_bg NONE
-set segment_separator \uE0B0
-set right_segment_separator \uE0B0
+set segment_separator ⮀
+set right_segment_separator ⮀
 # ===========================
 # Helper methods
 # ===========================
@@ -135,7 +135,7 @@ function prompt_hg -d "Display mercurial state"
     if command hg prompt >/dev/null 2>&1
       set branch (command hg prompt "{branch}")
       set state (command hg prompt "{status}")
-      set branch_symbol \uE0A0
+      set branch_symbol ⭠
       if [ "$state" = "!" ]
         prompt_segment red white "$branch_symbol $branch ±"
       else if [ "$state" = "?" ]
@@ -158,7 +158,7 @@ function prompt_git -d "Display the current git state"
       set -l branch (command git show-ref --head -s --abbrev |head -n1 2> /dev/null)
       set ref "➦ $branch "
     end
-    set branch_symbol \uE0A0
+    set branch_symbol ⭠
     set -l branch (echo $ref | sed  "s-refs/heads/-$branch_symbol -")
     if [ "$dirty" != "" ]
       prompt_segment yellow black "$branch $dirty"
@@ -173,7 +173,7 @@ function prompt_svn -d "Display the current svn state"
   set -l ref
   if command svn ls . >/dev/null 2>&1
     set branch (svn_get_branch)
-    set branch_symbol \uE0A0
+    set branch_symbol ⭠
     set revision (svn_get_revision)
     prompt_segment green black "$branch_symbol $branch:$revision"
   end
